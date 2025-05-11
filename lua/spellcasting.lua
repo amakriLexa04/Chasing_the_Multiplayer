@@ -486,7 +486,7 @@ end
 		local units = wesnoth.units.find(filter)
 		
 		for i,u in ipairs(units) do
-		    if (wml.variables['is_during_attack']) then return end
+		    if (wml.variables['is_badly_timed']) then return end
             selected_unit_id = u.id
 		    wml.variables ["current_caster"] = u.id
 			wesnoth.sync.invoke_command("sync_magic_system_vars", {id = u.id})
@@ -870,7 +870,7 @@ wesnoth.game_events.on_mouse_action = function(x,y)
 	
 	if (not selected_unit[1]) then return end
 	if wml.variables["caster_" .. selected_unit[1].id] then
-	    if (wml.variables['is_during_attack']) then return end
+	    if (wml.variables['is_badly_timed']) then return end
 	    
 		selected_unit_id = selected_unit[1].id
 	    

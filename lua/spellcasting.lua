@@ -45,7 +45,7 @@ function sync_magic_system_vars(Table)
     }
 	if Table.id then
 	    wml.fire.sync_variable {
-            name = "caster_" .. Table.id
+            name = "caster_" .. Table.id --можливо замінити на wml.variables["current_caster"]
         }
 	end
 end

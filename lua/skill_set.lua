@@ -291,19 +291,9 @@ local skill_set = {
 		xp_cost=8,
 	},
 	-------------------------
-	-- LEVITATE
-	-------------------------
-	[29] = {
-		id          = "skill_levitate_d",
-		label       = label(_"Levitate"),
-		image       = "icons/levitate.png",
-		description = _"<span color='#6ca364'><i><b>Spell:</b></i></span> Spend <span color='#00bbe6'><i>8xp</i></span> to gain <i>flight</i> and the <i>skirmisher</i> ability until the start of your next turn or until cancelled.",
-		xp_cost=8,
-	},
-	-------------------------
 	-- DISTANT HEAL
 	-------------------------
-	[30] = {
+	[29] = {
 		id          = "skill_disheal",
 		label       = label(_"Distant Heal"),
 		image       = "icons/disheal.png",
@@ -314,7 +304,7 @@ local skill_set = {
 	-------------------------
 	-- WARD
 	-------------------------
-	[31] = {
+	[30] = {
 		id          = "skill_ward",
 		label       = label(_"Holy Ward"),
 		image       = "icons/ward.png",

@@ -453,7 +453,9 @@ end
 	     	table.insert(skills_equipped, spell)
         end
 	    
-        
+        wml.variables ["current_caster"] = cfg.id
+		wesnoth.sync.invoke_command("sync_magic_system_vars", {id = cfg.id})
+		wesnoth.game_events.fire(("refresh_skills"))
 		wesnoth.game_events.fire(("refresh_" .. cfg.id .. "_skills"))
 		skills_equipped = nil
 		end
@@ -584,10 +586,19 @@ end
         }
 		
 		utils.vwriter.write(writer, caster_data_temp)
+		
+		wml.variables["current_caster"] = u.id
+		wesnoth.sync.invoke_command("sync_magic_system_vars", {id = u.id})
 			
 		wml.fire("caster_set_menu")
 		
 		wml.fire("refresh_skills", ({id = u.id}))
+		
+		wml.fire.do_command({
+            wml.tag.fire_event {
+                raise = "magic_system_add_animations"
+            }
+        })
 		
 		caster_data_temp, writer = nil
 		

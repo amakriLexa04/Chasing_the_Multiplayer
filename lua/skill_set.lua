@@ -263,7 +263,7 @@ local skill_set = {
 	-- MAGIC MISSILE
 	-------------------------
 	[26] = {
-		id          = "skill_magic_missile_d",
+		id          = "skill_magic_missile",
 		label       = label(_"Magic Missile"),
 		image       = "attacks/magic-missile.png",
 		description = _"<span color='#ad6a61'><i><b>Attack:</b></i></span> Ranged 7x3 fire, <i>magical</i>.",

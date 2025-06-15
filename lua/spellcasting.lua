@@ -325,7 +325,6 @@ function display_skills_dialog(selecting)
 								dialog[buttonid].label = small and "<span size='small'>Cancel</span>" or label('Cancel')
 								dialog[buttonid].on_button_click = function()
 								    wml.variables["caster_" .. caster.id .. ".spell_to_cast"] = skill.id.."_cancel"
-									wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 									gui.widget.close(dialog)
 								end
 							-- errors (extra spaces are to center the text)
@@ -363,7 +362,6 @@ function display_skills_dialog(selecting)
 								    wesnoth.sync.invoke_command("spellcasting_cost", {id=caster.id, xp_cost = skill.xp_cost, hp_cost = skill.hp_cost, gold_cost = skill.gold_cost, atk_cost = skill.atk_cost})
 									wml.variables["caster_" .. caster.id .. ".spell_to_cast"] = skill.id
 									wml.variables["caster_" .. caster.id .. ".spellcasted_this_turn"] = skill.id
-									wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 									gui.widget.close(dialog)
 								end
 							end
@@ -399,7 +397,6 @@ function display_skills_dialog(selecting)
 		dialog_result = wesnoth.sync.evaluate_single(function()
             retval = gui.show_dialog( dialog, preshow )
             wml.variables["caster_" .. caster.id .. ".wait_to_select_spells"] = retval==2 and 'yes' or 'no' --not nil, or else the key appears blank
-			wesnoth.sync.invoke_command("sync_magic_system_vars", {})
             return result_table
         end)
 		
@@ -410,7 +407,6 @@ function display_skills_dialog(selecting)
 			end
 		end
 		wml.variables["caster_" .. caster.id .. ".spell_equipped"] = table.concat(skills_equipped, ",")
-		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 	
 	-- cast spells, synced
 	else
@@ -418,14 +414,12 @@ function display_skills_dialog(selecting)
 			gui.show_dialog( dialog, preshow )
 			if (wml.variables["caster_" .. caster.id .. ".spell_to_cast"]) then
 			    wml.variables['current_caster'] = caster.id
-				wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 			    wml.fire.do_command({
                     wml.tag.fire_event {
                         raise = wml.variables["caster_" .. caster.id .. ".spell_to_cast"]
                     }
                 })
 			    wml.variables["caster_" .. caster.id .. ".spell_to_cast"] = nil
-				wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 			end
 		end)
 	end
@@ -898,8 +892,10 @@ wesnoth.game_events.on_mouse_action = function(x,y)
 	    	if not wml.variables["caster_" .. selected_unit_id .. ".utils_spellcasting_allowed"] then
 	    	    if (wml.variables["caster_" .. selected_unit_id .. ".wait_to_select_spells"]) then
                     display_skills_dialog(true)
+					wesnoth.sync.invoke_command("sync_magic_system_vars", {})
                 else
                     display_skills_dialog()
+					wesnoth.sync.invoke_command("sync_magic_system_vars", {})
                 end
 	    	end
 	    	

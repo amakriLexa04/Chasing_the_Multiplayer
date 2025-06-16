@@ -454,7 +454,7 @@ end
         wml.variables ["current_caster"] = cfg.id
 		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 		wesnoth.game_events.fire(("refresh_skills"))
-		skills_equipped = nil
+		--skills_equipped = nil
 		end
     end
 	

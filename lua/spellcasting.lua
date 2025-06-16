@@ -260,14 +260,16 @@ function display_skills_dialog(selecting)
 			-- menu callbacks for selecting skills
 			if (selecting) then
 				-- default to whatever skill we had selected last time
-				--for j,skill in pairs(skills_copy[i]) do
-				--    for _, equipped_skill in ipairs(skills_equipped) do
-				--        if (equipped_skill == skill.id) then
-				--		    button.selected_index=j
-				--			break
-				--		end
-				--	end
-				--end
+				if skills_equipped then
+				    for j,skill in pairs(skills_copy[i]) do
+				        for _, equipped_skill in ipairs(skills_equipped) do
+				            if (equipped_skill == skill.id) then
+				    		    button.selected_index=j
+				    			break
+				    		end
+				    	end
+				    end
+				end
 				
 				-- whenever we refresh the menu, update the image and label
 				refresh = function(button)

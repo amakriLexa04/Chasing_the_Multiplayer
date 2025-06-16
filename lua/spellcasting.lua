@@ -2,6 +2,7 @@
 local _ = wesnoth.textdomain "wesnoth-ctl"
 local utils = wesnoth.require "wml-utils"
 local spell_data = wesnoth.dofile('~add-ons/Chasing_the_Multiplayer/lua/skill_set.lua')
+local selected_unit_id
 
 -- to make code shorter
 local wml_actions = wesnoth.wml_actions
@@ -65,7 +66,7 @@ function display_skills_dialog(selecting)
 		T.grid{} }
 	local grid = dialog[3]
 	
-	local caster = ( wesnoth.units.find_on_map({ id=wml.variables["current_caster"] }) )[1]
+	local caster = ( wesnoth.units.find_on_map({ id=selected_unit_id }) )[1]
 	
 	local caster_side = wesnoth.get_sides({ side = caster.side })
     if not (caster_side[1].controller == "human" and caster_side[1].is_local and wml.variables["side_number"] == caster_side[1].side) then return end
@@ -450,7 +451,7 @@ end
 	     	table.insert(skills_equipped, spell)
         end
 	    
-        wml.variables["current_caster"] = cfg.id
+        wml.variables ["current_caster"] = cfg.id
 		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 		wesnoth.game_events.fire(("refresh_skills"))
 		skills_equipped = nil
@@ -463,7 +464,8 @@ end
 		local units = wesnoth.units.find(filter)
 		
 		for i,u in ipairs(units) do
-		wml.variables["current_caster"] = u.id
+        selected_unit_id = u.id
+		wml.variables ["current_caster"] = u.id
 		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 		
         display_skills_dialog(true)
@@ -484,7 +486,8 @@ end
 		
 		for i,u in ipairs(units) do
 		    if (wml.variables['is_badly_timed']) then return end
-		    wml.variables["current_caster"] = u.id
+            selected_unit_id = u.id
+		    wml.variables ["current_caster"] = u.id
 			wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 		    
             if not wml.variables["caster_" .. u.id .. ".utils_spellcasting_allowed"] then
@@ -887,14 +890,13 @@ wesnoth.game_events.on_mouse_action = function(x,y)
 	if wml.variables["caster_" .. selected_unit[1].id] then
 	    if (wml.variables['is_badly_timed']) then return end
 	    
-		wml.variables["current_caster"] = selected_unit[1].id
-		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
+		selected_unit_id = selected_unit[1].id
 	    
 	    if (os.clock()-last_click<0.25) then
 	    	wesnoth.audio.play("miss-2.ogg")
 	    
-	    	if not wml.variables["caster_" .. wml.variables["current_caster"] .. ".utils_spellcasting_allowed"] then
-	    	    if (wml.variables["caster_" .. wml.variables["current_caster"] .. ".wait_to_select_spells"]) then
+	    	if not wml.variables["caster_" .. selected_unit_id .. ".utils_spellcasting_allowed"] then
+	    	    if (wml.variables["caster_" .. selected_unit_id .. ".wait_to_select_spells"]) then
                     display_skills_dialog(true)
                 else
                     display_skills_dialog()

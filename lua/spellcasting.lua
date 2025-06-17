@@ -400,21 +400,19 @@ function display_skills_dialog(selecting)
 	if (selecting) then
 		dialog_result = wesnoth.sync.evaluate_single(function()
             retval = gui.show_dialog( dialog, preshow )
-			result_table.wait_to_select_spells = retval==2 and 'yes' or 'no' --not nil, or else the key appears blank
+            wml.variables["caster_" .. caster.id .. ".wait_to_select_spells"] = retval==2 and 'yes' or 'no' --not nil, or else the key appears blank
 			wesnoth.sync.invoke_command("sync_magic_system_vars", {})
+			
+			skills_equipped = {}
+		    for skill_id,skill_value in pairs(dialog_result) do
+		        if skill_value == true then
+		    	    table.insert(skills_equipped, skill_id)
+		    	end
+		    end
+		    wml.variables["caster_" .. caster.id .. ".spell_equipped"] = table.concat(skills_equipped, ",")
+		    wesnoth.sync.invoke_command("sync_magic_system_vars", {})
             return result_table
         end)
-		
-		skills_equipped = {}
-		for skill_id,skill_value in pairs(dialog_result) do
-		    if skill_value == true then
-			    table.insert(skills_equipped, skill_id)
-			end
-		end
-		wml.variables["caster_" .. caster.id .. ".spell_equipped"] = table.concat(skills_equipped, ",")
-		wml.variables["caster_" .. caster.id .. ".wait_to_select_spells"] = result_table.wait_to_select_spells
-		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
-        wesnoth.game_events.fire('refresh_skills')
 	
 	-- cast spells, synced
 	else

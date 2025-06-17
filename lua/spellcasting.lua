@@ -413,6 +413,11 @@ function display_skills_dialog(selecting)
 		end
 		wml.variables["caster_" .. caster.id .. ".spell_equipped"] = table.concat(skills_equipped, ",")
 		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
+		wml.fire.do_command({
+            wml.tag.fire_event {
+                raise = "refresh_skills"
+            }
+        })
 	
 	-- cast spells, synced
 	else
@@ -450,7 +455,6 @@ end
         wml.variables ["current_caster"] = cfg.id
 		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 		wesnoth.game_events.fire(("refresh_skills"))
-		skills_equipped = nil
     end
 	
 	wml_actions["select_caster_skills"] = function(cfg)

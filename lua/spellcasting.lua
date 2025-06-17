@@ -413,7 +413,6 @@ function display_skills_dialog(selecting)
 		end
 		wml.variables["caster_" .. caster.id .. ".spell_equipped"] = table.concat(skills_equipped, ",")
 		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
-        wesnoth.interface.add_chat_message(("Equiped spells for " .. caster.id .. ": "), wml.variables["caster_" .. caster.id .. ".spell_equipped"])
 	
 	-- cast spells, synced
 	else
@@ -454,20 +453,26 @@ end
     end
 	
 	wml_actions["select_caster_skills"] = function(cfg)
+	
+        wesnoth.audio.play("miss-2.ogg")
+		
 		local filter = wml.get_child(cfg, "filter") or
         wml.error "[select_caster_skills] missing required [filter] tag"
 		local units = wesnoth.units.find(filter)
 		
 		for i,u in ipairs(units) do
-        selected_unit_id = u.id
-		wml.variables ["current_caster"] = u.id
-		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
-		
-        display_skills_dialog(true)
-		
-		wml.variables["caster_" .. u.id .. ".spellcasted_this_turn"] = nil
-		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
-		wml.fire("refresh_skills", ({id = u.id}))
+		    if (wml.variables['is_badly_timed']) then return end
+			selected_unit_id = u.id
+		    wml.variables ["current_caster"] = u.id
+		    wesnoth.sync.invoke_command("sync_magic_system_vars", {})
+			
+			if not wml.variables["caster_" .. u.id .. ".utils_spellcasting_allowed"] then
+                display_skills_dialog(true)
+			    wml.fire("refresh_skills", ({id = u.id}))
+			    
+		        wml.variables["caster_" .. u.id .. ".spellcasted_this_turn"] = nil
+		        wesnoth.sync.invoke_command("sync_magic_system_vars", {})
+			end
 		end
     end
 	
@@ -489,8 +494,8 @@ end
 		        if (wml.variables["caster_" .. u.id .. ".wait_to_select_spells"]) then
                     display_skills_dialog(true)
 		    		wml.fire("refresh_skills", ({id = u.id}))
+					
 		    		wml.variables["caster_" .. u.id .. ".spellcasted_this_turn"] = nil
-					wml.variables["current_caster"] = u.id
 					wesnoth.sync.invoke_command("sync_magic_system_vars", {})
                 else
                     display_skills_dialog()

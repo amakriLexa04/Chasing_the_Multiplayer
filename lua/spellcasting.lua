@@ -447,18 +447,10 @@ end
 -- DEFINE WML TAGS
 -------------------------
 	wml_actions["refresh_skills"] = function(cfg)
-		if wml.variables["caster_" .. cfg.id .. ".spell_equipped"] then
-	    for spell in wml.variables["caster_" .. cfg.id .. ".spell_equipped"]:gmatch("[^,]+") do
-	     	table.insert(skills_equipped, spell)
-        end
-		
-		local skills_equipped = {}
-	    
         wml.variables ["current_caster"] = cfg.id
 		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 		wesnoth.game_events.fire(("refresh_skills"))
 		skills_equipped = nil
-		end
     end
 	
 	wml_actions["select_caster_skills"] = function(cfg)

@@ -468,7 +468,7 @@ end
 		
 		wml.variables["caster_" .. u.id .. ".spellcasted_this_turn"] = nil
 		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
-		wml.fire("refresh_skills", ({id = u.id}))
+		--wml.fire("refresh_skills", ({id = u.id}))
 		end
     end
 	

@@ -400,7 +400,7 @@ function display_skills_dialog(selecting)
 		dialog_result = wesnoth.sync.evaluate_single(function()
             retval = gui.show_dialog( dialog, preshow )
             wml.variables["caster_" .. caster.id .. ".wait_to_select_spells"] = retval==2 and 'yes' or 'no' --not nil, or else the key appears blank
-			wesnoth.sync.invoke_command("sync_magic_system_vars", {})
+			--wesnoth.sync.invoke_command("sync_magic_system_vars", {})
             return result_table
         end)
 		
@@ -411,7 +411,14 @@ function display_skills_dialog(selecting)
 			end
 		end
 		wml.variables["caster_" .. caster.id .. ".spell_equipped"] = table.concat(skills_equipped, ",")
+		wml.variables['current_caster'] = caster.id
 		wesnoth.sync.invoke_command("sync_magic_system_vars", {})
+		
+		wml.fire.do_command({
+            wml.tag.fire_event {
+                raise = "refresh_skills"
+            }
+        })
 	
 	-- cast spells, synced
 	else
@@ -422,7 +429,7 @@ function display_skills_dialog(selecting)
 				wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 			    wml.fire.do_command({
                     wml.tag.fire_event {
-                        raise = wml.variables["caster_" .. caster.id .. ".spell_to_cast"]
+                        raise = wml.variables["caster_" ..wml.variables['current_caster'] .. ".spell_to_cast"]
                     }
                 })
 			    wml.variables["caster_" .. wml.variables['current_caster'] .. ".spell_to_cast"] = nil
@@ -447,6 +454,7 @@ end
 -------------------------
 wml_actions["refresh_skills"] = function(cfg)
     wml.variables ["current_caster"] = cfg.id
+	wml.variables["caster_" .. cfg.id .. ".spellcasted_this_turn"] = nil
 	wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 	wesnoth.game_events.fire(("refresh_skills"))
 end
@@ -467,7 +475,7 @@ wml_actions["select_caster_skills"] = function(cfg)
 		
 		if not wml.variables["caster_" .. u.id .. ".utils_spellcasting_allowed"] then
             display_skills_dialog(true)
-		    wml.fire("refresh_skills", ({id = u.id}))
+		    --wml.fire("refresh_skills", ({id = u.id}))
 		    
 	        wml.variables["caster_" .. u.id .. ".spellcasted_this_turn"] = nil
 	        wesnoth.sync.invoke_command("sync_magic_system_vars", {})

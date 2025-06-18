@@ -54,6 +54,10 @@ end
 --                                                                  SKILL DIALOG
 --###########################################################################################################################################################
 function display_skills_dialog(selecting)
+    local caster = ( wesnoth.units.find_on_map({ id=selected_unit_id }) )[1]
+	local caster_side = wesnoth.get_sides({ side = caster.side })
+    if not (caster_side[1].controller == "human" and caster_side[1].is_local and wml.variables["side_number"] == caster_side[1].side) then return end
+
     local result_table = {} -- table used to return selected skills
 	
 	--###############################
@@ -65,20 +69,15 @@ function display_skills_dialog(selecting)
 		T.tooltip{ id="tooltip_large" }, -- mandatory field
 		T.grid{} }
 	local grid = dialog[3]
-	
-	local caster = ( wesnoth.units.find_on_map({ id=selected_unit_id }) )[1]
-	
-	local caster_side = wesnoth.get_sides({ side = caster.side })
-    if not (caster_side[1].controller == "human" and caster_side[1].is_local and wml.variables["side_number"] == caster_side[1].side) then return end
 
     --список усіх доступних заклять
 	local skills_copy = {}
     for i = 1, 10 do
 	    if wml.variables["caster_" .. caster.id .. ".spell_group_" .. i] then
-        skills_copy[i] = {}
-		for spell in wml.variables["caster_" .. caster.id .. ".spell_group_" .. i]:gmatch("[^,]+") do
-            table.insert(skills_copy[i], spell)
-        end
+            skills_copy[i] = {}
+		    for spell in wml.variables["caster_" .. caster.id .. ".spell_group_" .. i]:gmatch("[^,]+") do
+                table.insert(skills_copy[i], spell)
+            end
 		end
     end
 
@@ -88,7 +87,7 @@ function display_skills_dialog(selecting)
 	-- HEADER
 	-------------------------
 	table.insert( grid[2], T.row{ T.column{ border="bottom", border_size=15, T.image{  label="icons/banner1.png"  }}} )
-	local                title_text = selecting and wml.variables["caster_" .. caster.id .. ".u_title_select"]  or wml.variables["caster_" .. caster.id .. ".u_title_cast"]
+	local title_text = selecting and wml.variables["caster_" .. caster.id .. ".u_title_select"]  or wml.variables["caster_" .. caster.id .. ".u_title_cast"]
 	table.insert( grid[2], T.row{ T.column{ T.label{
         definition="title",
         horizontal_alignment="center",

@@ -455,8 +455,9 @@ end
 wml_actions["refresh_skills"] = function(cfg)
     wml.variables ["current_caster"] = cfg.id
 	wml.variables["caster_" .. cfg.id .. ".spellcasted_this_turn"] = nil
-	wesnoth.sync.invoke_command("sync_magic_system_vars", {})
+	wesnoth.interface.add_chat_message("Info", wml.variables["caster_" .. caster.id .. ".spell_equipped"])
 	wesnoth.game_events.fire(("refresh_skills"))
+	wesnoth.sync.invoke_command("sync_magic_system_vars", {})
 end
 
 wml_actions["select_caster_skills"] = function(cfg)
